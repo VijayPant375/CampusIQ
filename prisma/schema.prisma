@@ -31,6 +31,7 @@ model College {
   placements    Placement[]
   reviews       Review[]
   tags          CollegeTag[]
+  savedBy       SavedCollege[]
 }
 
 model CollegeTag {
@@ -83,8 +84,10 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  accounts      Account[]
-  sessions      Session[]
+  accounts         Account[]
+  sessions         Session[]
+  savedColleges    SavedCollege[]
+  savedComparisons SavedComparison[]
 }
 
 model Account {
@@ -120,4 +123,26 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model SavedCollege {
+  id        String   @id @default(cuid())
+  userId    String
+  collegeId Int
+  savedAt   DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  college   College  @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, collegeId])
+}
+
+model SavedComparison {
+  id         String   @id @default(cuid())
+  userId     String
+  name       String
+  collegeIds String
+  createdAt  DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

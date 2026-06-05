@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useEffect, useState, Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { StarRating } from '@/components/ui/StarRating';
 import { Badge } from '@/components/ui/Badge';
@@ -28,6 +29,12 @@ function CompareContent() {
   const [colleges, setColleges] = useState<College[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  const { data: session, status } = useSession();
+  const pathname = usePathname();
+  const [isSaving, setIsSaving] = useState(false);
+  const [showSaveInput, setShowSaveInput] = useState(false);
+  const [comparisonName, setComparisonName] = useState("");
 
   useEffect(() => {
     if (ids.length < 2) {
@@ -74,6 +81,37 @@ function CompareContent() {
     localStorage.removeItem('compareIds');
     window.dispatchEvent(new Event('compareUpdated'));
     router.push('/colleges');
+  };
+
+  const handleSaveComparison = async () => {
+    if (status !== 'authenticated') {
+      router.push(`/login?callbackUrl=${encodeURIComponent(pathname + '?ids=' + ids.join(','))}`);
+      return;
+    }
+    
+    if (!comparisonName.trim()) return;
+
+    setIsSaving(true);
+    try {
+      const res = await fetch('/api/user/comparisons', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: comparisonName,
+          collegeIds: ids.join(',')
+        })
+      });
+
+      if (res.ok) {
+        setShowSaveInput(false);
+        setComparisonName("");
+        // Optionally show toast success here later
+      }
+    } catch (err) {
+      console.error("Error saving comparison", err);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   if (ids.length < 2) {
@@ -144,6 +182,48 @@ function CompareContent() {
           <button onClick={handleClearAll} className="px-5 py-2.5 text-sm font-bold text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors shadow-sm">
             Clear All
           </button>
+          
+          {showSaveInput ? (
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                placeholder="Comparison Name..."
+                value={comparisonName}
+                onChange={(e) => setComparisonName(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                autoFocus
+              />
+              <button 
+                onClick={handleSaveComparison}
+                disabled={isSaving || !comparisonName.trim()}
+                className="px-4 py-2 text-sm font-bold text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors disabled:bg-green-400"
+              >
+                {isSaving ? "Saving..." : "Confirm"}
+              </button>
+              <button 
+                onClick={() => setShowSaveInput(false)}
+                className="px-3 py-2 text-sm text-gray-500 hover:text-gray-700"
+              >
+                Cancel
+              </button>
+            </div>
+          ) : (
+            <button 
+              onClick={() => {
+                if (status !== 'authenticated') {
+                  router.push(`/login?callbackUrl=${encodeURIComponent(pathname + '?ids=' + ids.join(','))}`);
+                } else {
+                  setShowSaveInput(true);
+                }
+              }} 
+              className="px-5 py-2.5 text-sm font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors shadow-sm flex items-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+              </svg>
+              Save this Comparison
+            </button>
+          )}
           {colleges.length < 3 && (
             <Link href="/colleges" className="px-5 py-2.5 text-sm font-bold text-white bg-blue-600 border border-transparent rounded-xl hover:bg-blue-700 transition-colors shadow-sm">
               + Add Another College

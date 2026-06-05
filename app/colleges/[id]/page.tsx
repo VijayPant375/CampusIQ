@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { Badge } from '@/components/ui/Badge';
 import { StarRating } from '@/components/ui/StarRating';
 import { TabNav } from '@/components/colleges/TabNav';
@@ -18,6 +19,10 @@ export default function CollegeDetailPage() {
   const [error, setError] = useState(false);
   const [activeTab, setActiveTab] = useState('Overview');
   const [compareIds, setCompareIds] = useState<number[]>([]);
+  const { data: session, status } = useSession();
+  const [isSaved, setIsSaved] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const fetchCollege = async () => {
@@ -33,8 +38,23 @@ export default function CollegeDetailPage() {
         setLoading(false);
       }
     };
+    
+    const checkSavedState = async () => {
+      if (status === 'authenticated') {
+        try {
+          const res = await fetch('/api/user/saved');
+          if (res.ok) {
+            const savedColleges = await res.json();
+            const currentId = parseInt(id as string, 10);
+            setIsSaved(savedColleges.some((sc: any) => sc.collegeId === currentId));
+          }
+        } catch (err) {}
+      }
+    };
+
     fetchCollege();
-  }, [id]);
+    checkSavedState();
+  }, [id, status]);
 
   useEffect(() => {
     const checkCompareIds = () => {
@@ -61,6 +81,39 @@ export default function CollegeDetailPage() {
       newIds.push(currentId);
       localStorage.setItem('compareIds', JSON.stringify(newIds));
       window.dispatchEvent(new Event('compareUpdated'));
+    }
+  };
+
+  const handleSaveCollege = async () => {
+    if (status !== 'authenticated') {
+      router.push(`/login?callbackUrl=${encodeURIComponent(pathname)}`);
+      return;
+    }
+
+    const currentId = parseInt(id as string, 10);
+    if (isNaN(currentId)) return;
+
+    setIsSaving(true);
+    try {
+      if (isSaved) {
+        await fetch('/api/user/saved', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ collegeId: currentId })
+        });
+        setIsSaved(false);
+      } else {
+        await fetch('/api/user/saved', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ collegeId: currentId })
+        });
+        setIsSaved(true);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -136,19 +189,35 @@ export default function CollegeDetailPage() {
                 </div>
               </div>
               
-              <button 
-                onClick={handleAddToCompare}
-                disabled={isAdded || isFull}
-                className={`flex-shrink-0 px-8 py-3.5 rounded-2xl font-bold shadow-xl transition-all duration-300 ${
-                  isAdded 
-                    ? 'bg-green-500/20 text-green-400 border border-green-500/30 cursor-not-allowed'
-                    : isFull
-                      ? 'bg-red-500/20 text-red-400 border border-red-500/30 cursor-not-allowed'
-                      : 'bg-white text-gray-900 hover:bg-blue-50 hover:scale-105 active:scale-95 hover:shadow-blue-500/20'
-                }`}
-              >
-                {compareButtonText}
-              </button>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button 
+                  onClick={handleSaveCollege}
+                  disabled={isSaving}
+                  className={`flex-shrink-0 flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl font-bold shadow-xl transition-all duration-300 ${
+                    isSaved 
+                      ? 'bg-blue-600 text-white hover:bg-blue-700 hover:shadow-blue-600/20'
+                      : 'bg-white/10 text-white backdrop-blur-md border border-white/20 hover:bg-white/20'
+                  }`}
+                >
+                  <svg className="w-5 h-5" fill={isSaved ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={isSaved ? 0 : 2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                  </svg>
+                  {isSaved ? "Saved" : "Save College"}
+                </button>
+                <button 
+                  onClick={handleAddToCompare}
+                  disabled={isAdded || isFull}
+                  className={`flex-shrink-0 px-8 py-3.5 rounded-2xl font-bold shadow-xl transition-all duration-300 ${
+                    isAdded 
+                      ? 'bg-green-500/20 text-green-400 border border-green-500/30 cursor-not-allowed'
+                      : isFull
+                        ? 'bg-red-500/20 text-red-400 border border-red-500/30 cursor-not-allowed'
+                        : 'bg-white text-gray-900 hover:bg-blue-50 hover:scale-105 active:scale-95 hover:shadow-blue-500/20'
+                  }`}
+                >
+                  {compareButtonText}
+                </button>
+              </div>
             </div>
           </div>
         </div>
