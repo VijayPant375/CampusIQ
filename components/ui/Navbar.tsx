@@ -62,6 +62,12 @@ export function Navbar() {
             >
               Browse Colleges
             </Link>
+            <Link 
+              href="/predictor" 
+              className={`text-sm font-bold transition-colors ${pathname.startsWith('/predictor') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
+            >
+              Predictor
+            </Link>
             
             <Link 
               href={compareCount >= 2 ? "/compare?ids=" + JSON.parse(localStorage.getItem('compareIds') || '[]').join(',') : "/colleges"}
