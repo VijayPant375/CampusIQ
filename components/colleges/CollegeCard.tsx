@@ -14,6 +14,25 @@ interface College {
   imageUrl?: string;
 }
 
+function getGradient(name: string) {
+  const gradients = [
+    'from-blue-500 to-indigo-600',
+    'from-purple-500 to-pink-600',
+    'from-emerald-500 to-teal-600',
+    'from-orange-500 to-red-600',
+    'from-cyan-500 to-blue-600',
+    'from-violet-500 to-purple-600',
+    'from-rose-500 to-pink-600',
+    'from-amber-500 to-orange-600',
+  ];
+  const index = name.charCodeAt(0) % gradients.length;
+  return gradients[index];
+}
+
+function getInitials(name: string) {
+  return name.split(' ').slice(0, 2).map(w => w[0]).join('');
+}
+
 export function CollegeCard({ college }: { college: College }) {
   // Format fees in LPA (Lakhs Per Annum). E.g., 230000 -> 2.30 LPA
   const feesInLPA = (college.totalFees / 100000).toFixed(2);
@@ -28,8 +47,10 @@ export function CollegeCard({ college }: { college: College }) {
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-in-out"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-600 bg-gray-50 dark:bg-gray-800/50">
-            No Image Available
+          <div className={`w-full h-full flex items-center justify-center bg-gradient-to-br ${getGradient(college.name)} group-hover:scale-105 transition-transform duration-500 ease-in-out`}>
+            <span className="text-4xl font-bold text-white tracking-wider">
+              {getInitials(college.name)}
+            </span>
           </div>
         )}
         <div className="absolute top-3 left-3 z-10">

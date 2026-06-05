@@ -1,131 +1,176 @@
 <div align="center">
 
-# CampusIQ - Smart College Predictor & Discussion Platform
+# CampusIQ
+**Your Gateway to Higher Education**
 
-**A full-stack, data-driven platform for college predictions, side-by-side comparisons, and student community discussions.**
-
-[![Next.js](https://img.shields.io/badge/Next.js-14-000000?style=flat-square&logo=next.js&logoColor=white)](https://nextjs.org)
-[![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
-[![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-UI-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
-[![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?style=flat-square&logo=prisma&logoColor=white)](https://www.prisma.io)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-4169E1?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org)
-[![Neon](https://img.shields.io/badge/Neon-Serverless_Postgres-00E599?style=flat-square&logo=neon&logoColor=white)](https://neon.tech)
-[![NextAuth](https://img.shields.io/badge/Auth-NextAuth.js-orange?style=flat-square)](https://next-auth.js.org)
+[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-18-blue?style=flat&logo=react)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=flat&logo=tailwind-css)](https://tailwindcss.com/)
+[![Prisma](https://img.shields.io/badge/Prisma-5.22.0-2D3748?style=flat&logo=prisma)](https://www.prisma.io/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=flat&logo=postgresql)](https://www.postgresql.org/)
+[![Neon](https://img.shields.io/badge/Neon-Serverless-00E599?style=flat&logo=neon)](https://neon.tech/)
+[![NextAuth](https://img.shields.io/badge/NextAuth.js-v5-purple?style=flat&logo=nextauth)](https://next-auth.js.org/)
+[![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-black?style=flat&logo=vercel)](https://vercel.com/)
 
 </div>
 
----
+## 🌐 Live Demo
+**[Experience CampusIQ Live](https://campus-iq-puce.vercel.app)**
 
 ## Overview
+CampusIQ is a comprehensive, open-source platform designed to help students discover, compare, and analyze higher education institutions across India. Built with a modern Next.js App Router stack, it provides highly detailed college data, powerful prediction tools, and an engaging community discussion system to guide academic decisions.
 
-**CampusIQ** is a comprehensive college exploration platform designed to help students make informed decisions about their higher education. It features a rich database of top Indian engineering colleges (IITs, NITs, IIITs, and top private universities), combining data analytics with a community discussion forum.
+## 🌟 Core Features
+* **Detailed College Directory:** Browse 67+ top institutions (IITs, NITs, and top private colleges) complete with location data, institution types, and detailed analytics.
+* **Rank Predictor:** Estimate admissions chances using a sophisticated algorithm supporting JEE Main, JEE Advanced, and BITSAT scores, fully adjusted for category and reservation logic.
+* **Intelligent Comparison Tool:** Compare multiple colleges side-by-side with automatic best-metric highlighting (highest placement, lowest fees) and save comparison profiles to your account.
+* **Community Q&A:** Engage in threaded discussions, post questions, provide answers, mark accepted solutions, and manage your own content.
+* **Modern UI/UX:** Enjoy a sleek, responsive interface featuring glassmorphism elements, dynamic gradients, robust dark mode, and seamless skeleton loading states.
 
-Students can browse colleges, use the Rank Predictor to find realistic matches based on their competitive exam scores, save their favorites, create detailed side-by-side comparisons, and ask specific questions directly linked to institutions.
+## 🏗️ Architecture
 
----
+```text
+    ┌─────────────────┐       ┌─────────────────┐       ┌─────────────────┐
+    │                 │       │                 │       │                 │
+    │   Next.js 14    │       │   API Routes    │       │   Prisma ORM    │
+    │  (App Router)   ├──────►│  (Serverless)   ├──────►│  (Connection    │
+    │                 │       │                 │       │    Pooler)      │
+    └─────────────────┘       └─────────────────┘       └────────┬────────┘
+                                                                 │
+                                                                 ▼
+                                                        ┌─────────────────┐
+                                                        │                 │
+                                                        │  Neon Postgres  │
+                                                        │  (Serverless    │
+                                                        │    Database)    │
+                                                        └─────────────────┘
+```
 
-## Core Features
+## 💻 Tech Stack
 
-### Authentication and User Flow
-- **NextAuth Integration**: Supports both Credentials (Email/Password) and OAuth (Google Sign-in).
-- **Secure Sessions**: JWT-based session management.
-- **Personalized Dashboard**: View your saved colleges, custom comparisons, and asked questions in one place.
+### Frontend
+| Technology | Description |
+|------------|-------------|
+| **Next.js 14** | React framework leveraging App Router for SSR and static generation. |
+| **React** | Component-based UI library. |
+| **Tailwind CSS** | Utility-first CSS framework for styling and glassmorphism. |
+| **TypeScript** | Strongly typed JavaScript for type safety and superior DX. |
 
-### Advanced College Browsing
-- **Rich Dataset**: 80 realistic college profiles including precise placement statistics, tuition fees, and course lists.
-- **Dynamic Filtering**: Instantly filter colleges by state, institution type (Public/Private), and budget using an interactive sidebar.
-- **Pagination & Search**: Lightning-fast search with server-side pagination.
+### Backend
+| Technology | Description |
+|------------|-------------|
+| **Prisma** | Next-generation Node.js and TypeScript ORM. |
+| **PostgreSQL** | Primary relational database hosted on Neon. |
+| **Neon** | Serverless Postgres database with edge connection pooling. |
+| **NextAuth v5** | Complete authentication solution (Email/Password + Google OAuth). |
+| **bcryptjs** | Secure password hashing. |
 
-### Intelligent Rank Predictor
-- **Multi-Exam Support**: Calculate realistic chances for JEE Main, JEE Advanced, and BITSAT.
-- **Smart Logic**: The predictor analyzes your rank against historical cutoffs, adding variance based on state quota and category.
-- **Match Categorization**: Results are clearly categorized as "High Chance", "Moderate Chance", or "Reach".
+### DevOps & Deployment
+| Technology | Description |
+|------------|-------------|
+| **Vercel** | Edge network deployment for Next.js applications. |
+| **Git/GitHub** | Version control and repository hosting. |
 
-### Side-by-Side Comparison Engine
-- **Custom Comparisons**: Select any number of colleges to compare their stats.
-- **Visual Highlighting**: Automatically highlights the best metrics across the selected colleges (e.g., lowest fees, highest package, best placement rate).
-- **Save & Share**: Save specific comparison configurations to your profile for easy future reference.
+## 🚀 Implemented Product Features
 
-### Community Q&A (Discussions)
-- **Tag-based System**: Ask questions and categorize them with tags for easy discovery.
-- **College Linking**: Link a question to a specific college so it appears directly on that college's profile page.
-- **Interactive Answers**: Other users can post answers, and the question owner can mark the best answer as "Accepted".
-- **Question Management**: Owners have full control to delete their questions.
+* **Advanced Filtering & Pagination:** Browse colleges dynamically with intuitive search, smart filtering, and fast pagination.
+* **Comprehensive College Profiles:** Dive deep into specific colleges through tabbed views (Overview, Placements, Courses, Reviews, Discussions).
+* **Robust Rank Predictor:** Data-driven predictions estimating college entry based on normalized exam scores.
+* **Dynamic Comparison Engine:** Real-time side-by-side evaluation of critical metrics (fees, average package, highest package, placement rate) with automatic visual highlighting for optimal choices.
+* **Community Features:** Complete Q&A system allowing question posting, answer threading, and question deletion by owners.
+* **User Accounts:** Secure registration/login using bcrypt, Google OAuth integration, and JWT-based session management.
+* **Save functionality:** Bookmark your favorite colleges and customized comparison templates directly to your user profile.
+* **Performance Enhancements:** Fluid UI transitions utilizing React Suspense, skeleton loaders, and Next.js Image optimizations.
+* **Resilience:** Comprehensive Error Boundaries implemented across the App Router to prevent catastrophic UI failures.
 
-### Modern UI/UX
-- **Glassmorphism & Animations**: Premium design aesthetics using Tailwind CSS with subtle hover effects and micro-animations.
-- **Dark Mode Support**: Seamless toggle between light and dark themes.
-- **Responsive Layout**: Fully optimized for mobile, tablet, and desktop viewing.
-- **Loading States**: Skeleton loaders and global spinners ensure a smooth user experience.
+## 📂 Project Structure
 
----
+```text
+campusiq/
+├── app/
+│   ├── (auth)/             # Login and registration flows
+│   ├── api/                # Serverless API routes
+│   │   ├── colleges/       # College data endpoints
+│   │   ├── predictor/      # Rank prediction logic
+│   │   ├── questions/      # Community discussion endpoints
+│   │   └── user/           # Saved colleges and comparisons
+│   ├── colleges/           # College browsing and detail pages
+│   ├── compare/            # Side-by-side comparison engine
+│   ├── discussions/        # Global Q&A board
+│   ├── predictor/          # Rank predictor interface
+│   ├── saved/              # User profile / saved items
+│   └── layout.tsx          # Root layout with providers and metadata
+├── components/
+│   ├── colleges/           # College-specific UI components
+│   └── ui/                 # Reusable UI elements (Navbar, Cards, Buttons)
+├── lib/
+│   └── prisma.ts           # Prisma client instantiation
+├── prisma/
+│   ├── data/               # Seed data (67 top colleges)
+│   ├── schema.prisma       # Database schema and models
+│   └── import.ts           # Database seeding script
+├── auth.ts                 # NextAuth v5 configuration
+├── middleware.ts           # Authentication and routing middleware
+└── tailwind.config.ts      # Tailwind CSS theme and styling rules
+```
 
-## Architecture
-
-CampusIQ is built using the **Next.js 14 App Router**, leveraging React Server Components (RSC) for maximum performance and SEO. 
-
-### Tech Stack Breakdown
-- **Frontend**: Next.js App Router, React, Tailwind CSS, Lucide Icons.
-- **Backend**: Next.js Server Actions & API Routes.
-- **Database**: PostgreSQL hosted on **Neon** (Serverless).
-- **ORM**: Prisma for type-safe database queries.
-- **Authentication**: NextAuth.js v5.
-
-### Database Schema
-The database uses a highly relational structure:
-- `User`, `Account`, `Session`: Handles authentication.
-- `College`: Core entity holding name, state, type, fees, rating, etc.
-- `Course`, `Placement`, `Review`, `CollegeTag`: One-to-many relationships to `College`.
-- `SavedCollege`, `SavedComparison`: Links users to their saved choices.
-- `Question`, `Answer`, `QuestionTag`: Powers the discussion system, linking `User` and `College`.
-
----
-
-## Getting Started
+## 🛠️ Getting Started
 
 ### Prerequisites
-- Node.js 18+
-- A PostgreSQL database (Neon recommended)
-- Google Cloud Console account (for OAuth)
+* Node.js (v18 or higher)
+* PostgreSQL Database (Neon recommended)
+* Google Cloud Console account (for OAuth)
 
-### Setup Instructions
+### 1. Clone the repository
+```bash
+git clone https://github.com/VijayPant375/CampusIQ.git
+cd campusiq
+```
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/yourusername/campusiq.git
-   cd campusiq
-   ```
+### 2. Install dependencies
+```bash
+npm install
+```
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+### 3. Environment Setup
+Create a `.env` file in the root directory and configure the following variables:
+```env
+DATABASE_URL="postgresql://user:password@host/db_name?sslmode=require"
+NEXTAUTH_SECRET="your_secure_random_string_here"
+NEXTAUTH_URL="http://localhost:3000"
+GOOGLE_CLIENT_ID="your_google_client_id"
+GOOGLE_CLIENT_SECRET="your_google_client_secret"
+```
 
-3. **Configure Environment Variables:**
-   Create a `.env` file in the root directory:
-   ```env
-   DATABASE_URL="postgresql://user:password@host/dbname?sslmode=require"
-   NEXTAUTH_SECRET="your-secret-key"
-   NEXTAUTH_URL="http://localhost:3000"
-   GOOGLE_CLIENT_ID="your-google-client-id"
-   GOOGLE_CLIENT_SECRET="your-google-client-secret"
-   ```
+### 4. Initialize Database
+Push the Prisma schema to your PostgreSQL database and generate the Prisma client:
+```bash
+npx prisma db push
+npx prisma generate
+```
 
-4. **Initialize Database:**
-   ```bash
-   npx prisma db push
-   npx prisma generate
-   ```
+### 5. Seed the Database
+Populate the database with the pre-configured 67 colleges:
+```bash
+npm run import:data
+```
 
-5. **Import College Data:**
-   Seed the database with the pre-configured dataset of colleges:
-   ```bash
-   npm run import:data
-   ```
+### 6. Run the Development Server
+```bash
+npm run dev
+```
+Navigate to `http://localhost:3000` to see the application running.
 
-6. **Start Development Server:**
-   ```bash
-   npm run dev
-   ```
-   Visit `http://localhost:3000` to see the application running.
+## ⚠️ Limitations and Notes
+* **Build Optimization:** ESLint is intentionally disabled during the production build step (`eslint.ignoreDuringBuilds: true` in `next.config.mjs`) to ensure smooth CI/CD deployments on Vercel without being blocked by strict developmental warnings.
+* **Data scope:** The initial database is seeded with 67 top Indian engineering institutes. More can be added via the database natively.
+* **Authentication:** Ensure Google OAuth redirect URIs are properly configured in your Google Cloud Console for both `http://localhost:3000/api/auth/callback/google` (development) and your live Vercel domain (production).
+
+---
+
+<div align="center">
+  Built with ❤️ by VijayPant375
+  <br />
+  If you find this project helpful, please consider giving it a ⭐!
+</div>
