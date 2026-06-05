@@ -170,7 +170,9 @@ Navigate to `http://localhost:3000` to see the application running.
 ---
 
 <div align="center">
-  Built with ❤️ by VijayPant375
-  <br />
-  If you find this project helpful, please consider giving it a ⭐!
+
+**Built with ❤️ by [VijayPant375](https://github.com/VijayPant375)**
+
+⭐ Star this repo if you find it helpful!
+
 </div>
