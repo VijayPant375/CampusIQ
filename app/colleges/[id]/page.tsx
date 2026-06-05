@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter, usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 import { Badge } from '@/components/ui/Badge';
 import { StarRating } from '@/components/ui/StarRating';
 import { TabNav } from '@/components/colleges/TabNav';
@@ -23,6 +24,8 @@ export default function CollegeDetailPage() {
   const [isSaved, setIsSaved] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const pathname = usePathname();
+  const [discussions, setDiscussions] = useState<any[]>([]);
+  const [loadingDiscussions, setLoadingDiscussions] = useState(false);
 
   useEffect(() => {
     const fetchCollege = async () => {
@@ -55,6 +58,24 @@ export default function CollegeDetailPage() {
     fetchCollege();
     checkSavedState();
   }, [id, status]);
+
+  useEffect(() => {
+    if (activeTab === 'Discussions') {
+      const fetchDiscussions = async () => {
+        setLoadingDiscussions(true);
+        try {
+          const res = await fetch(`/api/questions?collegeId=${id}`);
+          if (res.ok) {
+            const data = await res.json();
+            setDiscussions(data);
+          }
+        } catch (err) {} finally {
+          setLoadingDiscussions(false);
+        }
+      };
+      fetchDiscussions();
+    }
+  }, [id, activeTab]);
 
   useEffect(() => {
     const checkCompareIds = () => {
@@ -230,7 +251,7 @@ export default function CollegeDetailPage() {
             <TabNav 
               activeTab={activeTab} 
               onTabChange={setActiveTab} 
-              tabs={['Overview', 'Courses', 'Placements']} 
+              tabs={['Overview', 'Courses', 'Placements', 'Discussions']} 
             />
           </div>
 
@@ -328,6 +349,48 @@ export default function CollegeDetailPage() {
                   </div>
                 ) : (
                   <p className="text-gray-500 dark:text-gray-400 italic">No reviews yet.</p>
+                )}
+              </div>
+            )}
+
+            {/* Discussions Tab */}
+            {activeTab === 'Discussions' && (
+              <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Community Discussions</h3>
+                  <Link href="/discussions/ask" className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors text-sm">
+                    Ask a Question
+                  </Link>
+                </div>
+                
+                {loadingDiscussions ? (
+                  <div className="flex justify-center py-12">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  </div>
+                ) : discussions.length === 0 ? (
+                  <div className="text-center py-12 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700">
+                    <p className="text-gray-500 dark:text-gray-400 mb-4">No discussions for this college yet.</p>
+                    <Link href="/discussions/ask" className="text-blue-600 font-bold hover:underline">Be the first to ask!</Link>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {discussions.map((q) => (
+                      <Link key={q.id} href={`/discussions/${q.id}`} className="block bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 transition-colors">
+                        <div className="flex justify-between items-start gap-4">
+                          <div>
+                            <h4 className="text-lg font-bold text-blue-600 dark:text-blue-400 mb-2">{q.title}</h4>
+                            <div className="flex items-center gap-3 text-xs text-gray-500">
+                              <span>{q.user?.name || "User"}</span>
+                              <span>•</span>
+                              <span>{new Date(q.createdAt).toLocaleDateString()}</span>
+                              <span>•</span>
+                              <span className="font-semibold text-gray-700 dark:text-gray-300">{q._count.answers} answers</span>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
                 )}
               </div>
             )}
