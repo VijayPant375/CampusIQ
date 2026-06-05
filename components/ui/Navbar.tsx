@@ -3,10 +3,13 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useSession, signOut } from 'next-auth/react';
 
 export function Navbar() {
   const pathname = usePathname();
   const [compareCount, setCompareCount] = useState(0);
+  const { data: session } = useSession();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     const checkCompareCount = () => {
@@ -74,6 +77,49 @@ export function Navbar() {
                 </span>
               )}
             </Link>
+
+            {session ? (
+              <div className="relative">
+                <button
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 font-bold hover:ring-2 ring-blue-400 focus:outline-none"
+                >
+                  {session.user?.image ? (
+                    <img src={session.user.image} alt="Avatar" className="w-8 h-8 rounded-full" />
+                  ) : (
+                    session.user?.name?.charAt(0).toUpperCase() || session.user?.email?.charAt(0).toUpperCase() || "U"
+                  )}
+                </button>
+                
+                {dropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 py-1">
+                    <Link
+                      href="/saved"
+                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      My Saved
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setDropdownOpen(false);
+                        signOut();
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
+              >
+                Sign In
+              </Link>
+            )}
           </nav>
         </div>
       </div>
